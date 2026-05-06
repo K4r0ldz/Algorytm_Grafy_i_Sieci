@@ -26,7 +26,8 @@ def dijkstra(graph, start):
         prev[vertex] = None
 
     dist[start] = 0
-    prev[start] = start
+    prev[start] = None  
+
     priority_queue = [(0, start)]
     max_dist = 0
     max_vertex = start
@@ -45,7 +46,8 @@ def dijkstra(graph, start):
                     max_vertex = neighbor
 
     # Jezeli jakis wierzcholek nieodwiedzony, allvisit = false
-    allvisit = None not in prev.values()
+    allvisit = float('inf') not in dist.values() 
+                                        
 
     return max_vertex, max_dist, allvisit
 
@@ -54,15 +56,18 @@ def run():
 
     for id in list(data.keys()):
         start_vertex = None
-        min_value = 0
+        extreme_vertex = None
+        min_value = float('inf') # nie wiem czy dobrze myślę ale nie powinno być max_value?
         for vertex in list(data[id].keys()):
             result = dijkstra(data[id], vertex)
-            if result[2]:
-                if min_value < result[1]:
-                    min_value = result[1]
+            max_vertex, max_dist, allvisit = result
+            if allvisit: # Jeżeli wszystkie wierzchołki zostały odwiedzone, to sprawdzamy czy max_dist jest mniejszy niż min_value
+                if min_value > max_dist:
+                    min_value = max_dist
                     start_vertex = vertex
+                    extreme_vertex = max_vertex
 
-        print(start_vertex) # Tutaj będzie się odpalała funkcja z visualization.py zeby pokazac ten analizowany graf 
+        print(f"Graph: {id}, Start: {start_vertex}, Extreme: {extreme_vertex}, Min Distance: {min_value}") # Tutaj będzie się odpalała funkcja z visualization.py zeby pokazac ten analizowany graf 
 
    
 
