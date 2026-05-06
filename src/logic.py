@@ -1,5 +1,5 @@
+from src import visualization
 import csv 
-from collections import defaultdict
 import heapq
 
 
@@ -16,6 +16,8 @@ def dataReader(path='data/edges.csv'):
             graph.setdefault(tgt, {})
     return graphs
 
+
+# Algorytm Dijkstry zwraca minimalną odległość dla maksymalnego wierzchołka
 def dijkstra(graph, start):
     dist = {}
     prev = {}
@@ -24,6 +26,7 @@ def dijkstra(graph, start):
         prev[vertex] = None
 
     dist[start] = 0
+    prev[start] = start
     priority_queue = [(0, start)]
     max_dist = 0
     max_vertex = start
@@ -41,12 +44,27 @@ def dijkstra(graph, start):
                     max_dist = distance
                     max_vertex = neighbor
 
-    return max_vertex, max_dist
+    # Jezeli jakis wierzcholek nieodwiedzony, allvisit = false
+    allvisit = None not in prev.values()
 
+    return max_vertex, max_dist, allvisit
 
-
-if __name__ == "__main__":
+def run():
     data = dataReader()
-    print(dijkstra(data['1'], 'A'))
+
+    for id in list(data.keys()):
+        start_vertex = None
+        min_value = 0
+        for vertex in list(data[id].keys()):
+            result = dijkstra(data[id], vertex)
+            if result[2]:
+                if min_value < result[1]:
+                    min_value = result[1]
+                    start_vertex = vertex
+
+        print(start_vertex) # Tutaj będzie się odpalała funkcja z visualization.py zeby pokazac ten analizowany graf 
+
+   
+
 
 
