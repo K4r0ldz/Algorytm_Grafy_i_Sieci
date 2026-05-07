@@ -1,0 +1,31 @@
+import matplotlib.pyplot as plt
+import networkx as nx
+def draw_graph(graph, directed=True, start_vertex=None, extreme_vertex=None, title=None):
+
+    plt.figure(figsize=(8, 8))
+    G = nx.DiGraph() if directed else nx.Graph()
+    for vertex in graph:
+        G.add_node(vertex) # Dodawanie wierzchołków do grafu
+
+    for vertex, neighbors in graph.items():
+        for neighbor, weight in neighbors.items():
+            G.add_edge(vertex, neighbor, weight=weight) # Dodawanie krawędzi, oraz wagi do wierzchołków
+
+    pos = nx.spring_layout(G, k=2.0, scale=2.0, seed=42, iterations=300, weight=None) # Position dla wierzchołków
+
+    colors = []
+    for vertex in G.nodes():
+        if vertex == start_vertex:
+            colors.append('red') # Czerwony wierzchołek to najlepsze miejsce na umieszczenie strazy
+        else:
+            colors.append('lightblue')
+
+    nx.draw(G, pos, with_labels=True, node_color=colors, node_size=600, arrows=directed)
+
+    edge_labels = nx.get_edge_attributes(G, 'weight') # Lista wag
+    nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels) # Wyświetlanie wag 
+
+    if title:
+        plt.title(title)
+    plt.show()
+

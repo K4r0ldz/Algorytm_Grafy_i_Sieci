@@ -67,8 +67,8 @@ def run():
                     start_vertex = vertex
                     extreme_vertex = max_vertex
 
-        print(f"Graph: {id}, Start: {start_vertex}, Extreme: {extreme_vertex}, Min Distance: {min_value}")  
-
+        print(f"Graph: {id}, Start: {start_vertex}, Extreme: {extreme_vertex}, Min Distance: {min_value}") 
+        visualization.draw_graph(data[id], start_vertex=start_vertex, extreme_vertex=extreme_vertex) 
    
 
 

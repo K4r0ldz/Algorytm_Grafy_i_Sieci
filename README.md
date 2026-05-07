@@ -13,8 +13,7 @@ Projekt opiera się na teorii grafów i problemie **centrum grafu** (p-center pr
 
 ## Technologie
 - **Python 3.x**
-- **Matplotlib**: Wizualizacja wyników na płaszczyźnie.
-- **Pandas**: Przetwarzanie danych o infrastrukturze.
+- **Matplotlib, Networkx**: Wizualizacja wyników na płaszczyźnie.
 
 ## Struktura Projektu
 - `data/`: Dane wejściowe (pliki CSV).
