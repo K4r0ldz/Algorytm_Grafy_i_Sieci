@@ -17,3 +17,8 @@ graph_id,source,target,weight
 3,3,6,2
 3,4,5,6
 3,5,6,9
+4,B,D,10
+4,C,D,3
+4,S,C,10
+4,S,A,1
+4,A,B,2
