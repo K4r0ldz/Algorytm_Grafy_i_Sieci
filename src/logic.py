@@ -57,7 +57,7 @@ def run():
     for id in list(data.keys()):
         start_vertex = None
         extreme_vertex = None
-        min_value = float('inf') # nie wiem czy dobrze myślę ale nie powinno być max_value?
+        min_value = float('inf') 
         for vertex in list(data[id].keys()):
             result = dijkstra(data[id], vertex)
             max_vertex, max_dist, allvisit = result
@@ -67,7 +67,7 @@ def run():
                     start_vertex = vertex
                     extreme_vertex = max_vertex
 
-        print(f"Graph: {id}, Start: {start_vertex}, Extreme: {extreme_vertex}, Min Distance: {min_value}") # Tutaj będzie się odpalała funkcja z visualization.py zeby pokazac ten analizowany graf 
+        print(f"Graph: {id}, Start: {start_vertex}, Extreme: {extreme_vertex}, Min Distance: {min_value}")  
 
    
 

@@ -1,1 +1,0 @@
-print("Wojciech tu był!")
