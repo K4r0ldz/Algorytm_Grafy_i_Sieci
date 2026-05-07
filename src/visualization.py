@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import networkx as nx
-def draw_graph(graph, directed=True, start_vertex=None, extreme_vertex=None, title=None):
+def draw_graph(graph, start_vertex=None, directed = True, title=None):
 
     plt.figure(figsize=(8, 8))
     G = nx.DiGraph() if directed else nx.Graph()
