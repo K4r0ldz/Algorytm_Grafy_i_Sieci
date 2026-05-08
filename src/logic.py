@@ -4,16 +4,17 @@ import heapq
 
 
 # Odczyt danych z pliku edges.csv
-def dataReader(path='data/edges.csv'):
+def dataReader(path='data/edges.csv', graph_id='1'):
     graphs = {}
     with open(path, newline='') as file:
         for row in csv.DictReader(file):
             gid = row['graph_id']
             src = row['source']
             tgt = row['target']
-            graph = graphs.setdefault(gid, {})
-            graph.setdefault(src, {})[tgt] = int(row['weight'])
-            graph.setdefault(tgt, {})
+            if gid == graph_id:
+                graph = graphs.setdefault(gid, {})
+                graph.setdefault(src, {})[tgt] = int(row['weight'])
+                graph.setdefault(tgt, {})
     return graphs
 
 
@@ -52,7 +53,7 @@ def dijkstra(graph, start):
     return max_vertex, max_dist, allvisit
 
 def run():
-    data = dataReader()
+    data = dataReader(graph_id='1') # Za pomocą parametru graph_id można wybrać który graf chcemy przetworzyć, domyślnie jest to '1'
 
     for id in list(data.keys()):
         start_vertex = None

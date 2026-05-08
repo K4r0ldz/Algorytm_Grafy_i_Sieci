@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import networkx as nx
+
 def draw_graph(graph, start_vertex=None, directed = True, title=None):
 
     plt.figure(figsize=(8, 8))
@@ -29,3 +30,5 @@ def draw_graph(graph, start_vertex=None, directed = True, title=None):
         plt.title(title)
     plt.show()
 
+# plt.figure(figsize=(8, 8))
+# plt.show()
