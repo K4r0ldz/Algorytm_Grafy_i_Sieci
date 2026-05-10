@@ -50,26 +50,28 @@ def dijkstra(graph, start):
     allvisit = float('inf') not in dist.values() 
                                         
 
-    return max_vertex, max_dist, allvisit
+    return max_vertex, max_dist, allvisit, prev
 
 def run():
-    data = dataReader(graph_id='1') # Za pomocą parametru graph_id można wybrać który graf chcemy przetworzyć, domyślnie jest to '1'
+    data = dataReader(graph_id='5') # Za pomocą parametru graph_id można wybrać który graf chcemy przetworzyć, domyślnie jest to '1'
 
     for id in list(data.keys()):
         start_vertex = None
         extreme_vertex = None
         min_value = float('inf') 
+        previous_vertex = None
         for vertex in list(data[id].keys()):
             result = dijkstra(data[id], vertex)
-            max_vertex, max_dist, allvisit = result
+            max_vertex, max_dist, allvisit, prev = result
             if allvisit: # Jeżeli wszystkie wierzchołki zostały odwiedzone, to sprawdzamy czy max_dist jest mniejszy niż min_value
                 if min_value > max_dist:
                     min_value = max_dist
                     start_vertex = vertex
                     extreme_vertex = max_vertex
+                    previous_vertex = prev
 
         print(f"Graph: {id}, Start: {start_vertex}, Extreme: {extreme_vertex}, Min Distance: {min_value}") 
-        visualization.draw_graph(data[id], start_vertex=start_vertex, title=f"Graph: {id}") 
+        visualization.draw_graph(data[id], start_vertex=start_vertex, title=f"Graph: {id}", previous_vertex=previous_vertex) 
    
 
 
