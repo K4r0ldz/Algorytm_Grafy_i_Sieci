@@ -1,0 +1,19 @@
+Graf 1
+Skierowany: A, najdalej D  Czas: 5
+Nieskierowany: A, najdlaej D Czas: 5
+
+Graf 2
+Skierowany: S, najdalej X Czas: 4
+Nieskierowany: A, najdalej X Czas: 3
+
+Graf 3
+Skierowany: 1, najdalej 5 Czas: 26
+Nieskierowany: 3, najdalej 4 Czas: 11
+
+Graf 4
+Skierowany: S, najdalej D Czas: 13
+Nieskierowany: A, najdalej D Czas: 12
+
+Graf 5
+Skierowany: 11, najdalej 1 Czas: 48
+Nieskierowany: 8, najdalej 1 Czas: 16 
