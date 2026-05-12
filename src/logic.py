@@ -4,56 +4,62 @@ import heapq
 
 
 # Odczyt danych z pliku edges.csv
-def dataReader(path='data/edges.csv', graph_id='1'):
+def dataReader(path='data/edges.csv'):
     graphs = {}
+    is_directed = {}
+    with open('data/isdirected.csv', newline='') as file:
+        for row in csv.DictReader(file):
+                is_directed[row['graph_id']] = row['is_directed'] == 'True'
+
     with open(path, newline='') as file:
         for row in csv.DictReader(file):
             gid = row['graph_id']
             src = row['source']
             tgt = row['target']
-            if gid == graph_id:
-                graph = graphs.setdefault(gid, {})
+            graph = graphs.setdefault(gid, {})
+            if is_directed[gid]:
                 graph.setdefault(src, {})[tgt] = int(row['weight'])
                 graph.setdefault(tgt, {})
-    return graphs
+                continue
+            graph.setdefault(src, {})[tgt] = int(row['weight'])
+            graph.setdefault(tgt, {})[src] = int(row['weight'])
+            graph.setdefault(tgt, {})
+
+    return graphs, is_directed
 
 
 # Algorytm Dijkstry zwraca minimalną odległość dla maksymalnego wierzchołka
 def dijkstra(graph, start):
-    dist = {}
-    prev = {}
-    for vertex in graph:
-        dist[vertex] = float('inf')
-        prev[vertex] = None
-
+    dist = {vertex: float('inf') for vertex in graph}
+    prev = {vertex: None for vertex in graph}
     dist[start] = 0
-    prev[start] = None  
 
     priority_queue = [(0, start)]
-    max_dist = 0
-    max_vertex = start
 
     while priority_queue:
         current_dist, current_vertex = heapq.heappop(priority_queue)
-
+        if current_dist > dist[current_vertex]:
+            continue
         for neighbor, weight in graph[current_vertex].items():
             distance = current_dist + weight
             if distance < dist[neighbor]:
                 dist[neighbor] = distance
                 prev[neighbor] = current_vertex
                 heapq.heappush(priority_queue, (distance, neighbor))
-                if distance > max_dist:
-                    max_dist = distance
-                    max_vertex = neighbor
 
     # Jezeli jakis wierzcholek nieodwiedzony, allvisit = false
-    allvisit = float('inf') not in dist.values() 
-                                        
+    allvisit = float('inf') not in dist.values()
+    if allvisit:
+        max_vertex = max(dist, key=dist.get)
+        max_dist = dist[max_vertex]
+    else:
+        max_vertex = start
+        max_dist = 0
 
     return max_vertex, max_dist, allvisit, prev
 
 def run():
-    data = dataReader(graph_id='5') # Za pomocą parametru graph_id można wybrać który graf chcemy przetworzyć, domyślnie jest to '1'
+    data, is_directed = dataReader()
 
     for id in list(data.keys()):
         start_vertex = None
@@ -71,7 +77,7 @@ def run():
                     previous_vertex = prev
 
         print(f"Graph: {id}, Start: {start_vertex}, Extreme: {extreme_vertex}, Min Distance: {min_value}") 
-        visualization.draw_graph(data[id], start_vertex=start_vertex, title=f"Graph: {id}", previous_vertex=previous_vertex) 
+        visualization.draw_graph(data[id], directed = is_directed[id], start_vertex=start_vertex, title=f"Graph: {id}", previous_vertex=previous_vertex) 
    
 
 
