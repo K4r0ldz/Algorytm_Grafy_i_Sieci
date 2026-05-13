@@ -1,16 +1,23 @@
 import csv
 import heapq
+import sys
+from pathlib import Path
+
+
+def _resource_path(relative: str) -> Path:
+    base = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parent.parent))
+    return base / relative
 
 
 # Odczyt danych z pliku edges.csv
 def dataReader(path='data/edges.csv'):
     graphs = {}
     is_directed = {}
-    with open('data/isdirected.csv', newline='') as file:
+    with open(_resource_path('data/isdirected.csv'), newline='') as file:
         for row in csv.DictReader(file):
             is_directed[row['graph_id']] = row['is_directed'] == 'True'
 
-    with open(path, newline='') as file:
+    with open(_resource_path(path), newline='') as file:
         for row in csv.DictReader(file):
             gid = row['graph_id']
             src = row['source']
