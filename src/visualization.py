@@ -14,7 +14,6 @@ def build_figure(graph, start_vertex=None, directed=True, title=None, previous_v
         for neighbor, weight in neighbors.items():
             G.add_edge(vertex, neighbor, weight=weight)
 
-    # pos = nx.spring_layout(G, k=5.0, scale=2.0, seed=42, iterations=300, weight=None)
     pos = nx.circular_layout(G, scale=2.0)
 
     colors = ['red' if v == start_vertex else 'lightblue' for v in G.nodes()]
