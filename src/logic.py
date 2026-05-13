@@ -1,5 +1,4 @@
-from src import visualization
-import csv 
+import csv
 import heapq
 
 
@@ -9,7 +8,7 @@ def dataReader(path='data/edges.csv'):
     is_directed = {}
     with open('data/isdirected.csv', newline='') as file:
         for row in csv.DictReader(file):
-                is_directed[row['graph_id']] = row['is_directed'] == 'True'
+            is_directed[row['graph_id']] = row['is_directed'] == 'True'
 
     with open(path, newline='') as file:
         for row in csv.DictReader(file):
@@ -23,7 +22,6 @@ def dataReader(path='data/edges.csv'):
                 continue
             graph.setdefault(src, {})[tgt] = int(row['weight'])
             graph.setdefault(tgt, {})[src] = int(row['weight'])
-            graph.setdefault(tgt, {})
 
     return graphs, is_directed
 
@@ -58,27 +56,44 @@ def dijkstra(graph, start):
 
     return max_vertex, max_dist, allvisit, prev
 
-def run():
-    data, is_directed = dataReader()
+# Zwraca wierzchołek centrum, czyli min z max odległości 
+def compute_center(graph):
+    start_vertex = None
+    extreme_vertex = None
+    min_value = float('inf')
+    previous_vertex = None
+    for vertex in list(graph.keys()):
+        max_vertex, max_dist, allvisit, prev = dijkstra(graph, vertex)
+        if allvisit and min_value > max_dist:
+            min_value = max_dist
+            start_vertex = vertex
+            extreme_vertex = max_vertex
+            previous_vertex = prev
+    if start_vertex is None:
+        return None
+    return start_vertex, extreme_vertex, min_value, previous_vertex
 
-    for id in list(data.keys()):
-        start_vertex = None
-        extreme_vertex = None
-        min_value = float('inf') 
-        previous_vertex = None
-        for vertex in list(data[id].keys()):
-            result = dijkstra(data[id], vertex)
-            max_vertex, max_dist, allvisit, prev = result
-            if allvisit: # Jeżeli wszystkie wierzchołki zostały odwiedzone, to sprawdzamy czy max_dist jest mniejszy niż min_value
-                if min_value > max_dist:
-                    min_value = max_dist
-                    start_vertex = vertex
-                    extreme_vertex = max_vertex
-                    previous_vertex = prev
+# Buduje graf z tekstu podanego przez uzytkwnika 
+def parse_edges(edges_text, is_directed):
+    graph = {}
+    for line_no, raw in enumerate(edges_text.strip().splitlines(), start=1):
+        line = raw.strip()
+        if not line:
+            continue
+        parts = [p.strip() for p in line.split(',')]
+        if len(parts) != 3:
+            raise ValueError(f"Linia {line_no}: oczekiwano 'source,target,weight', otrzymano '{raw}'")
+        src, tgt = parts[0], parts[1]
+        try:
+            weight = float(parts[2])
+        except ValueError:
+            raise ValueError(f"Linia {line_no}: waga '{parts[2]}' nie jest liczbą")
+        graph.setdefault(src, {})[tgt] = weight
+        graph.setdefault(tgt, {})
+        if not is_directed:
+            graph[tgt][src] = weight
 
-        print(f"Graph: {id}, Start: {start_vertex}, Extreme: {extreme_vertex}, Min Distance: {min_value}") 
-        visualization.draw_graph(data[id], directed = is_directed[id], start_vertex=start_vertex, title=f"Graph: {id}", previous_vertex=previous_vertex) 
-   
+    if not graph:
+        raise ValueError("Nie podano żadnych krawędzi.")
 
-
-
+    return graph
