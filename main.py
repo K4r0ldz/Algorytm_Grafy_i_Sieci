@@ -106,7 +106,11 @@ class App:
                   command=self._show_menu, width=22).pack(side="left", padx=5)
 
     def _run_sample(self):
-        data, is_directed = logic.dataReader()
+        try:
+            data, is_directed = logic.dataReader()
+        except (ValueError, OSError, KeyError) as exc:
+            messagebox.showerror("Błąd danych", str(exc))
+            return
         results = []
         for gid in data:
             result = logic.compute_center(data[gid])

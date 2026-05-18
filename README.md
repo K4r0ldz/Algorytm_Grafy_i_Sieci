@@ -13,7 +13,7 @@ Projekt opiera się na teorii grafów i problemie **centrum grafu** (p-center pr
 
 ## Technologie
 - **Python 3.x**
-- **Matplotlib, Networkx**: Wizualizacja wyników na płaszczyźnie.
+- **Matplotlib, tkinterx**: Wizualizacja wyników na płaszczyźnie.
 
 ## Struktura Projektu
 - `data/`: Dane wejściowe (pliki CSV).
