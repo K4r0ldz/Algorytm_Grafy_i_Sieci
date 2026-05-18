@@ -14,7 +14,8 @@ def build_figure(graph, start_vertex=None, directed=True, title=None, previous_v
         for neighbor, weight in neighbors.items():
             G.add_edge(vertex, neighbor, weight=weight)
 
-    pos = nx.circular_layout(G, scale=2.0)
+    kk_pos = nx.kamada_kawai_layout(G)
+    pos = nx.spring_layout(G, pos=kk_pos, k=2.5, iterations=50, seed=42)
 
     colors = ['red' if v == start_vertex else 'lightblue' for v in G.nodes()]
 
@@ -52,5 +53,6 @@ def build_figure(graph, start_vertex=None, directed=True, title=None, previous_v
     if title:
         ax.set_title(title)
 
+    ax.margins(0.15)
     fig.tight_layout()
     return fig

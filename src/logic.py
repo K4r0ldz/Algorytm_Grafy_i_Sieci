@@ -1,5 +1,6 @@
 import csv
 import heapq
+import math
 import sys
 from pathlib import Path
 
@@ -7,6 +8,29 @@ from pathlib import Path
 def _resource_path(relative: str) -> Path:
     base = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parent.parent))
     return base / relative
+
+
+# Walidacja wagi krawędzi liczba, skończona, nieujemna
+def _parse_weight(raw, context):
+    try:
+        weight = float(raw)
+    except (TypeError, ValueError):
+        raise ValueError(f"{context}: waga '{raw}' nie jest liczbą")
+    if not math.isfinite(weight):
+        raise ValueError(f"{context}: waga '{raw}' musi być skończona (bez inf/nan)")
+    if weight < 0:
+        raise ValueError(f"{context}: waga '{raw}' jest ujemna — Dijkstra wymaga wag nieujemnych")
+    return weight
+
+
+# Dodaje krawędź przy duplikacie zachowuje mniejszą wagę
+def _add_edge(graph, src, tgt, weight):
+    neighbors = graph.setdefault(src, {})
+    if tgt in neighbors:
+        neighbors[tgt] = min(neighbors[tgt], weight)
+    else:
+        neighbors[tgt] = weight
+    graph.setdefault(tgt, {})
 
 
 # Odczyt danych z pliku edges.csv
@@ -22,13 +46,13 @@ def dataReader(path='data/edges.csv'):
             gid = row['graph_id']
             src = row['source']
             tgt = row['target']
+            if gid not in is_directed:
+                raise ValueError(f"Graf '{gid}' nie ma wpisu w isdirected.csv")
+            weight = _parse_weight(row['weight'], f"Graf {gid}, krawędź {src}->{tgt}")
             graph = graphs.setdefault(gid, {})
-            if is_directed[gid]:
-                graph.setdefault(src, {})[tgt] = int(row['weight'])
-                graph.setdefault(tgt, {})
-                continue
-            graph.setdefault(src, {})[tgt] = int(row['weight'])
-            graph.setdefault(tgt, {})[src] = int(row['weight'])
+            _add_edge(graph, src, tgt, weight)
+            if not is_directed[gid]:
+                _add_edge(graph, tgt, src, weight)
 
     return graphs, is_directed
 
@@ -91,14 +115,10 @@ def parse_edges(edges_text, is_directed):
         if len(parts) != 3:
             raise ValueError(f"Linia {line_no}: oczekiwano 'source,target,weight', otrzymano '{raw}'")
         src, tgt = parts[0], parts[1]
-        try:
-            weight = float(parts[2])
-        except ValueError:
-            raise ValueError(f"Linia {line_no}: waga '{parts[2]}' nie jest liczbą")
-        graph.setdefault(src, {})[tgt] = weight
-        graph.setdefault(tgt, {})
+        weight = _parse_weight(parts[2], f"Linia {line_no}")
+        _add_edge(graph, src, tgt, weight)
         if not is_directed:
-            graph[tgt][src] = weight
+            _add_edge(graph, tgt, src, weight)
 
     if not graph:
         raise ValueError("Nie podano żadnych krawędzi.")

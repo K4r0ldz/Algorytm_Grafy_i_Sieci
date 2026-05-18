@@ -3,7 +3,7 @@ import tkinter as tk
 from tkinter import messagebox, scrolledtext
 
 # Wykres matplot jaki widget Tkintera
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg 
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 from src import logic, visualization
 
@@ -106,7 +106,11 @@ class App:
                   command=self._show_menu, width=22).pack(side="left", padx=5)
 
     def _run_sample(self):
-        data, is_directed = logic.dataReader()
+        try:
+            data, is_directed = logic.dataReader()
+        except (ValueError, OSError, KeyError) as exc:
+            messagebox.showerror("Błąd danych", str(exc))
+            return
         results = []
         for gid in data:
             result = logic.compute_center(data[gid])
@@ -162,6 +166,28 @@ class App:
         canvas = FigureCanvasTkAgg(fig, master=self.canvas_frame)
         canvas.draw()
         canvas.get_tk_widget().pack(fill="both", expand=True)
+
+        ax = fig.axes[0]
+        base_xlim = ax.get_xlim()
+        base_ylim = ax.get_ylim()
+
+        def on_scroll(event):
+            if event.inaxes is not ax:
+                return
+            scale = 1 / 1.2 if event.button == 'up' else 1.2
+            x, y = event.xdata, event.ydata
+            ax.set_xlim([x + (xl - x) * scale for xl in ax.get_xlim()])
+            ax.set_ylim([y + (yl - y) * scale for yl in ax.get_ylim()])
+            canvas.draw_idle()
+
+        def on_double_click(event):
+            if event.dblclick:
+                ax.set_xlim(base_xlim)
+                ax.set_ylim(base_ylim)
+                canvas.draw_idle()
+
+        canvas.mpl_connect('scroll_event', on_scroll)
+        canvas.mpl_connect('button_press_event', on_double_click)
 
         self.prev_btn.config(state="normal" if self.result_idx > 0 else "disabled")
         self.next_btn.config(
