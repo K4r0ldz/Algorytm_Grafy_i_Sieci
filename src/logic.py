@@ -10,7 +10,7 @@ def _resource_path(relative: str) -> Path:
     return base / relative
 
 
-# Walidacja wagi krawędzi: liczba, skończona, nieujemna
+# Walidacja wagi krawędzi liczba, skończona, nieujemna
 def _parse_weight(raw, context):
     try:
         weight = float(raw)
@@ -23,7 +23,7 @@ def _parse_weight(raw, context):
     return weight
 
 
-# Dodaje krawędź; przy duplikacie zachowuje mniejszą wagę
+# Dodaje krawędź przy duplikacie zachowuje mniejszą wagę
 def _add_edge(graph, src, tgt, weight):
     neighbors = graph.setdefault(src, {})
     if tgt in neighbors:
